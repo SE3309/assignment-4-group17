@@ -5,7 +5,7 @@ function Container({ children }) {
   return (
     <div className="container">
       <div className="container-left"></div>
-      <div>{children}</div>
+      <div className="container-center">{children}</div>
       <div className="container-right"></div>
     </div>
   );

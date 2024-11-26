@@ -3,5 +3,34 @@
   align-items: center;
   justify-content: center;
   background-color: purple;
-  height: 140px;
+  height: 120px;
+}
+
+.navbar-frame {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.navbar-logo {
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+  user-select: none;
+}
+
+.navbar-logout {
+  font-size: 18px;
+  font-weight: 500;
+  padding: 4px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.2s ease-out;
+}
+
+.navbar-logout:hover {
+  background-color: rgb(212, 212, 212);
 }
