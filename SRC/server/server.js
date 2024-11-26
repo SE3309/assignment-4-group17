@@ -4,9 +4,9 @@ const app = express();
 // const con = require("./db");
 app.use(express.json());
 
-const loginRoute = require("./routes/Login");
-const ownerRoute = require("./routes/Owner");
-const technicianRoute = require("./routes/Technician");
+const loginRoute = require("./routes/login");
+const ownerRoute = require("./routes/owner");
+const technicianRoute = require("./routes/technician");
 
 app.use("/login", loginRoute);
 app.use("/owner", ownerRoute);
