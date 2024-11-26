@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const con = require("../db");
 
-
-
+// POST login
 router.post("/", async (req, res) => {
   try {
     const { username, password } = req.body;

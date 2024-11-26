@@ -13,6 +13,7 @@ function ViewPanels({
 }) {
   const [panels, setPanels] = useState([]);
 
+  // Fetch Panels of Farm
   useEffect(() => {
     axios
       .get(`api/owner/farm/${farmData.farmID}/panels`)
@@ -29,23 +30,26 @@ function ViewPanels({
     <div className="viewpanels">
       <h1>View Panels: Farm {farmData.farmID}</h1>
       <div className="viewpanels-grid">
+        {/* Map Over All Panels To Create Panel Grid */}
         {panels.map((panel) => (
           <div
             className={`viewpanels-panel ${panel.panelStatus} ${
               panelData.panelID === panel.panelID ? "selected" : ""
             }`}
             key={panel.panelID}
-            onClick={() => setPanelData(panel)}
+            onClick={() => setPanelData(panel)} // Send Panel Data To Parent
           ></div>
         ))}
       </div>
       <div className="viewpanels-options">
+        {/* View Panel Status */}
         <button
           disabled={!Object.hasOwn(panelData, "panelID")}
           onClick={openStatusModal}
         >
           View Panel Status
         </button>
+        {/* View Panel Energy Produced */}
         <button
           disabled={!Object.hasOwn(panelData, "panelID")}
           onClick={openEnergyModal}

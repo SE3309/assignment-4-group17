@@ -2,8 +2,7 @@ const express = require("express");
 const router = express.Router();
 const con = require("../db");
 
-
-
+// GET all farms of a owner
 router.get("/farms/:ownerid", async (req, res) => {
   try {
     const { ownerid } = req.params;
@@ -26,10 +25,10 @@ router.get("/farms/:ownerid", async (req, res) => {
   }
 });
 
+// GET all panels of a farm
 router.get("/farm/:farmid/panels", async (req, res) => {
   try {
     const { farmid } = req.params;
-    console.log(farmid);
 
     const query = `
       SELECT *
@@ -49,29 +48,31 @@ router.get("/farm/:farmid/panels", async (req, res) => {
   }
 });
 
+// GET panel count of all farms
 router.get("/panelCount", async (req, res) => {
   try {
     const query = `
-        SELECT farmID,COUNT(1) as numOfPanels
+        SELECT farmID, COUNT(1) as numOfPanels
         FROM panel
         GROUP BY farmID
         `;
 
     con.query(query, function (err, result) {
       if (err) res.status(404).json({ error: err });
-
       res.status(200).json(result);
     });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// GET total energy produced by all farms
 router.post("/energyProduced", async (req, res) => {
   try {
     const { fromDate, toDate } = req.body;
 
     const query = `
-        SELECT farmID,SUM(e.energyProduced) as totalEnergy
+        SELECT farmID, SUM(e.energyProduced) as totalEnergy
         FROM panel p,energyProduced e
         WHERE e.panelID=p.panelID
             AND e.currentDate<='${toDate}'
@@ -90,26 +91,27 @@ router.post("/energyProduced", async (req, res) => {
   }
 });
 
+// GET all records of a panel
 router.get("/records/:panelID", async (req, res) => {
-    try {
-      const { panelID } = req.params;
-      console.log(panelID);
-  
-      const query = `
+  try {
+    const { panelID } = req.params;
+    console.log(panelID);
+
+    const query = `
         SELECT *
         FROM logs l, maintenance m
         WHERE l.panelID=m.panelID AND l.panelID='${panelID}'
         ORDER BY logDate DESC
         LIMIT 5
         `;
-  
-      con.query(query, function (err, result) {
-        if (err) throw err;
-        
-        res.status(200).json(result);
-      });
-    } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
+
+    con.query(query, function (err, result) {
+      if (err) throw err;
+
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 module.exports = router;

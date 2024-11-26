@@ -16,13 +16,15 @@ import { useNavigate } from "react-router-dom";
 function Owner() {
   const navigate = useNavigate();
 
-  const [isModal1Open, setIsModal1Open] = useState(false);
-  const [isModal2Open, setIsModal2Open] = useState(false);
-  const [isModal3Open, setIsModal3Open] = useState(false);
-  const [isModal4Open, setIsModal4Open] = useState(false);
-  const [isModal5Open, setIsModal5Open] = useState(false);
-  const [isModal6Open, setIsModal6Open] = useState(false);
+  // Modal State
+  const [isModal1Open, setIsModal1Open] = useState(false); // Compare
+  const [isModal2Open, setIsModal2Open] = useState(false); // Energy Produced
+  const [isModal3Open, setIsModal3Open] = useState(false); // Money Earned
+  const [isModal4Open, setIsModal4Open] = useState(false); // View Panels
+  const [isModal5Open, setIsModal5Open] = useState(false); // Panel Status
+  const [isModal6Open, setIsModal6Open] = useState(false); // Panel Energy Produced
 
+  // Modal Functions
   const openModal1 = () => {
     setIsModal1Open(true);
   };
@@ -78,10 +80,12 @@ function Owner() {
     setIsModal6Open(false);
   };
 
+  // Data State
   const [farms, setFarms] = useState([]);
   const [farmData, setFarmData] = useState({});
   const [panelData, setPanelData] = useState({});
 
+  // Fetch Owner Farms
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || user.type !== "owner") {
@@ -102,21 +106,27 @@ function Owner() {
       <Container>
         <div className="frame">
           <h1>All Farms</h1>
+          {/* Compare Energy Produced For All Farms */}
           <button onClick={openModal1}>
             Compare Energy Produced For All Farms
           </button>
+
           <h1>Your Farms</h1>
+          {/* Map Over Each Owner Farm */}
           {farms.length !== 0 ? (
             <div className="farm-grid">
               {farms.map((farm) => (
                 <div className="farm" key={farm.farmID}>
                   <h2>Farm {farm.farmID}</h2>
+                  {/* View Energy Produced */}
                   <button onClick={() => openModal2(farm)}>
                     View Energy Produced
                   </button>
+                  {/* View Money Earned */}
                   <button onClick={() => openModal3(farm)}>
                     View Money Earned
                   </button>
+                  {/* View Panels */}
                   <button onClick={() => openModal4(farm)}>View Panels</button>
                 </div>
               ))}
@@ -124,6 +134,8 @@ function Owner() {
           ) : (
             <h2>No Farms Found</h2>
           )}
+
+          {/* Modals */}
           <Modal open={isModal1Open} onClose={closeModal1}>
             <Compare />
           </Modal>

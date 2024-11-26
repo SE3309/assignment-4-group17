@@ -11,48 +11,47 @@ function Compare() {
   const [countTable, setCountTable] = useState("");
 
   useEffect(function () {
-    axios
-      .get(`/api/owner/panelCount`)
-     
-      .then((res) => {
-        if (res.data) setCountTable(
+    axios.get(`/api/owner/panelCount`).then((res) => {
+      if (res.data)
+        setCountTable(
           <table className="table">
             <tr>
               <td>Farm ID</td>
               <td>Number of Panels</td>
             </tr>
             {res.data.map((entry) => (
-              <tr>
+              <tr key={entry.farmID}>
                 <td>{entry.farmID}</td>
                 <td>{entry.numOfPanels}</td>
               </tr>
             ))}
           </table>
         );
-      });
+    });
   }, []);
 
   function totalEnergy() {
     axios
       .post(`/api/owner/energyProduced`, {
         fromDate: `${fromDate}`,
-        toDate: `${toDate}`
+        toDate: `${toDate}`,
       })
       .then((res) => {
-        if (res.data) setEnergyTable(
-          <table className="table">
-            <tr>
-              <td>Farm ID</td>
-              <td>Total Energy Produced</td>
-            </tr>
-            {res.data.map((entry) => (
+        if (res.data)
+          setEnergyTable(
+            <table className="table">
               <tr>
-                <td>{entry.farmID}</td>
-                <td>{entry.totalEnergy}</td>
+                <td>Farm ID</td>
+                <td>Total Energy Produced</td>
               </tr>
-            ))}
-          </table>
-        );
+              {res.data.map((entry) => (
+                <tr key={entry.farmID}>
+                  <td>{entry.farmID}</td>
+                  <td>{entry.totalEnergy}</td>
+                </tr>
+              ))}
+            </table>
+          );
       });
   }
   return (
