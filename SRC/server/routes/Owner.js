@@ -2,6 +2,8 @@ const express= require('express')
 const router= express.Router()
 const con = require("../db");
 
+router.use(express.json())
+
 router.get("/farms/:userid", async (req, res) => {
     try {
       const { userid } = req.params;
@@ -24,4 +26,47 @@ router.get("/farms/:userid", async (req, res) => {
     }
   });
 
+  router.get("/panelCount", async (req, res) => {
+    try{
+        const query = `
+        SELECT farmID,COUNT(1) as numOfPanels
+        FROM panel
+        GROUP BY farmID
+        `;
+        
+        con.query(query, function (err, result) {
+            if (err) res.status(404).json({ error: err })
+            
+            res.status(200).json(result);
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  router.post("/energyProduced", async (req, res) => {
+    
+    try{
+        
+        const {fromDate, toDate} =req.body
+        
+
+        const query = `
+        SELECT farmID,SUM(e.energyProduced) as totalEnergy
+        FROM panel p,energyProduced e
+        WHERE e.panelID=p.panelID 
+            AND e.currentDate<='${toDate}' 
+            AND e.currentDate>='${fromDate}'
+        GROUP BY farmID
+        `;
+        
+        con.query(query, function (err, result) {
+            if (err) res.status(404).json({ error: err })
+            
+            res.status(200).json(result);
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 module.exports = router;
