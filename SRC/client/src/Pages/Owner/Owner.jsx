@@ -83,7 +83,7 @@ function Owner() {
     }
     setUser(user);
     axios
-      .get(`/api/farm/${user.id}`)
+      .get(`/api/owner/farm/${user.id}`)
       .then((res) => {
         // setFarms(res.data);
         console.log(res.data);
