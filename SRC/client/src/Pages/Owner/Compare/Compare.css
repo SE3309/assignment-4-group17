@@ -1,0 +1,18 @@
+
+.compare-search{
+    display: flex;
+    justify-content: center;
+
+}
+.compare-search>*{
+    margin: 10px;
+}
+
+.table{
+    background-color: purple;
+    color:white;
+    font-weight: 500;
+}
+td{
+    border: 1px solid rgb(0, 0, 0);
+}
