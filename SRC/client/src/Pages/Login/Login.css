@@ -1,14 +1,3 @@
-.login-frame {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: 20px;
-}
-
-.login-frame h1 {
-  margin: 0;
-}
-
 .login-form {
   display: flex;
   flex-direction: column;

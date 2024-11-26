@@ -11,7 +11,6 @@ function Navbar() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
-      console.log(user);
       setUser(user);
     }
   }, [navigate]);

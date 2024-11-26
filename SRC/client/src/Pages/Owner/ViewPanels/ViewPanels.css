@@ -1,0 +1,52 @@
+.viewpanels {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+}
+
+.viewpanels button {
+  width: fit-content;
+}
+
+.viewpanels button:disabled {
+  background-color: rgb(177, 177, 177);
+  cursor: not-allowed;
+}
+
+.viewpanels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 11px);
+  grid-gap: 20px;
+  row-gap: 1px;
+}
+
+.viewpanels-panel {
+  border: 1px solid #242424;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.14s ease;
+}
+
+.viewpanels-panel:hover {
+  border: 4px solid cyan;
+}
+
+.viewpanels-panel.selected {
+  border: 4px solid yellow;
+}
+
+.viewpanels-panel.active {
+  background-color: #4caf50;
+}
+
+.viewpanels-panel.inactive {
+  background-color: rgb(248, 57, 57);
+}
+
+.viewpanels-options {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}

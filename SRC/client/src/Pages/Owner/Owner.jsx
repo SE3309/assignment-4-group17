@@ -31,27 +31,34 @@ function Owner() {
     setIsModal1Open(false);
   };
 
-  const openModal2 = () => {
+  const openModal2 = (farm) => {
+    setFarmData(farm);
     setIsModal2Open(true);
   };
 
   const closeModal2 = () => {
+    setFarmData({});
     setIsModal2Open(false);
   };
 
-  const openModal3 = () => {
+  const openModal3 = (farm) => {
+    setFarmData(farm);
     setIsModal3Open(true);
   };
 
   const closeModal3 = () => {
+    setFarmData({});
     setIsModal3Open(false);
   };
 
-  const openModal4 = () => {
+  const openModal4 = (farm) => {
+    setFarmData(farm);
     setIsModal4Open(true);
   };
 
   const closeModal4 = () => {
+    setFarmData({});
+    setPanelData({});
     setIsModal4Open(false);
   };
 
@@ -71,8 +78,7 @@ function Owner() {
     setIsModal6Open(false);
   };
 
-  const [user, setUser] = useState({});
-  const [farms, setFarms] = useState([1, 2]);
+  const [farms, setFarms] = useState([]);
   const [farmData, setFarmData] = useState({});
   const [panelData, setPanelData] = useState({});
 
@@ -81,12 +87,10 @@ function Owner() {
     if (!user || user.type !== "owner") {
       return navigate("/");
     }
-    setUser(user);
     axios
-      .get(`/api/owner/farm/${user.id}`)
+      .get(`/api/owner/farms/${user.id}`)
       .then((res) => {
-        // setFarms(res.data);
-        console.log(res.data);
+        if (res.data) setFarms(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -96,46 +100,55 @@ function Owner() {
   return (
     <div className="owner page">
       <Container>
-        <h1>Owner</h1>
-        <button onClick={openModal1}>
-          Compare Energy Produced For All Farms
-        </button>
-        <div>
+        <div className="frame">
+          <h1>All Farms</h1>
+          <button onClick={openModal1}>
+            Compare Energy Produced For All Farms
+          </button>
           <h1>Your Farms</h1>
-          <div className="">
-            {farms.map((farm) => (
-              <div className="farm" key={farm}>
-                <h2>Farm {farm}</h2>
-                <button onClick={openModal2}>View Energy Produced</button>
-                <button onClick={openModal3}>View Money Earned</button>
-                <button onClick={openModal4}>View Panels</button>
-              </div>
-            ))}
-          </div>
+          {farms.length !== 0 ? (
+            <div className="farm-grid">
+              {farms.map((farm) => (
+                <div className="farm" key={farm.farmID}>
+                  <h2>Farm {farm.farmID}</h2>
+                  <button onClick={() => openModal2(farm)}>
+                    View Energy Produced
+                  </button>
+                  <button onClick={() => openModal3(farm)}>
+                    View Money Earned
+                  </button>
+                  <button onClick={() => openModal4(farm)}>View Panels</button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <h2>No Farms Found</h2>
+          )}
+          <Modal open={isModal1Open} onClose={closeModal1}>
+            <Compare />
+          </Modal>
+          <Modal open={isModal2Open} onClose={closeModal2}>
+            <EnergyProduced farmData={farmData} />
+          </Modal>
+          <Modal open={isModal3Open} onClose={closeModal3}>
+            <MoneyEarned farmData={farmData} />
+          </Modal>
+          <Modal open={isModal4Open} onClose={closeModal4}>
+            <ViewPanels
+              farmData={farmData}
+              panelData={panelData}
+              setPanelData={setPanelData}
+              openStatusModal={openModal5}
+              openEnergyModal={openModal6}
+            />
+          </Modal>
+          <Modal open={isModal5Open} onClose={closeModal5} zIndex={1100}>
+            <PanelStatus panelData={panelData} />
+          </Modal>
+          <Modal open={isModal6Open} onClose={closeModal6} zIndex={1100}>
+            <PanelEnergyProduced panelData={panelData} />
+          </Modal>
         </div>
-        <Modal open={isModal1Open} onClose={closeModal1}>
-          <Compare />
-        </Modal>
-        <Modal open={isModal2Open} onClose={closeModal2}>
-          <EnergyProduced farmData={farmData} />
-        </Modal>
-        <Modal open={isModal3Open} onClose={closeModal3}>
-          <MoneyEarned farmData={farmData} />
-        </Modal>
-        <Modal open={isModal4Open} onClose={closeModal4}>
-          <ViewPanels
-            farmData={farmData}
-            setPanelData={setPanelData}
-            openStatusModal={openModal5}
-            openEnergyModal={openModal6}
-          />
-        </Modal>
-        <Modal open={isModal5Open} onClose={closeModal5} zIndex={1100}>
-          <PanelStatus panelData={panelData} />
-        </Modal>
-        <Modal open={isModal6Open} onClose={closeModal6} zIndex={1100}>
-          <PanelEnergyProduced panelData={panelData} />
-        </Modal>
       </Container>
     </div>
   );

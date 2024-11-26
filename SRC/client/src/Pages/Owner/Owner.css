@@ -1,3 +1,9 @@
+.farm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  grid-gap: 20px;
+}
+
 .farm {
   display: flex;
   flex-direction: column;
@@ -7,6 +13,31 @@
   border: 1px solid #e0e0e0;
   border-radius: 5px;
   background-color: #f9f9f9;
-  width: 200px;
-  height: 200px;
+  box-shadow: 8px 12px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  height: 300px;
+  row-gap: 10px;
+}
+
+.farm h2 {
+  margin: 0;
+}
+
+.owner button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: purple;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+
+.owner button:hover {
+  background-color: rgb(175, 40, 175);
+}
+
+.farm button {
+  width: 100%;
 }
