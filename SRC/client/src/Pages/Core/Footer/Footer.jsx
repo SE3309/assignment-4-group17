@@ -5,7 +5,9 @@ function Footer() {
   return (
     <div className="footer">
       <Container>
-        <h1>Footer</h1>
+        <div className="footer-frame">
+          <h4 className="footer-copyright">&copy; 2024 Solar Farm</h4>
+        </div>
       </Container>
     </div>
   );

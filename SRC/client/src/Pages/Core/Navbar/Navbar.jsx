@@ -24,7 +24,7 @@ function Navbar() {
     <div className="navbar">
       <Container>
         <div className="navbar-frame">
-          <h1 className="navbar-logo">Solar Farms</h1>
+          <h1 className="navbar-logo">Solar Farm</h1>
           {user && (
             <button className="navbar-logout" onClick={handleLogout}>
               Logout

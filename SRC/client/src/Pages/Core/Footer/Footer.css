@@ -5,3 +5,16 @@
   background-color: purple;
   height: 200px;
 }
+
+.footer-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.footer-copyright {
+  font-size: 18px;
+  color: white;
+  user-select: none;
+}
