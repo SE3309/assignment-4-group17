@@ -66,7 +66,7 @@ router.get("/panelCount", async (req, res) => {
   }
 });
 
-// GET total energy produced by all farms
+// POST total energy produced by all farms
 router.post("/energyProduced", async (req, res) => {
   try {
     const { fromDate, toDate } = req.body;
@@ -109,6 +109,50 @@ router.get("/records/:panelID", async (req, res) => {
       if (err) throw err;
 
       res.status(200).json(result);
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// POST gets panel energy produced
+router.post("/panel/energyProduced", async (req, res) => {
+  try {
+    const { panelID, farmID, fromDate, toDate } = req.body;
+
+    const query = `
+    SELECT weatherConditions.weatherDescription, SUM(energyProduced.energyProduced) as sumEnergyProduced, AVG(energyProduced.energyProduced) as avgEnergyProduced
+    FROM energyProduced
+    JOIN weather ON energyProduced.currentDate = weather.currentDate
+    JOIN farmWeather ON farmWeather.weatherID = weather.weatherID
+    JOIN weatherConditions ON weatherConditions.weatherID = weather.weatherID
+    WHERE energyProduced.panelID = ${panelID}
+      AND farmWeather.farmID = ${farmID}
+      AND energyProduced.currentDate >= '${fromDate}'
+      AND energyProduced.currentDate <= '${toDate}'
+    GROUP BY weatherConditions.weatherDescription
+    `;
+
+    con.query(query, function (err, result) {
+      if (err) res.status(404).json({ error: err });
+
+      const query2 = `
+      SELECT *
+      FROM energyProduced
+      JOIN weather ON energyProduced.currentDate = weather.currentDate
+      JOIN farmWeather ON farmWeather.weatherID = weather.weatherID
+      JOIN weatherConditions ON weatherConditions.weatherID = weather.weatherID
+      WHERE energyProduced.panelID = ${panelID}
+        AND farmWeather.farmID = ${farmID}
+        AND energyProduced.currentDate >= '${fromDate}'
+        AND energyProduced.currentDate <= '${toDate}'
+      `;
+      con.query(query2, function (err, result2) {
+        if (err) res.status(404).json({ error: err });
+        res
+          .status(200)
+          .json({ groupedData: result, longitudinalData: result2 });
+      });
     });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });

@@ -1,0 +1,78 @@
+.panelenergyproduced {
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  margin-bottom: 10px;
+}
+
+.panelenergyproduced-dateform {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+}
+
+.panelenergyproduced-dateform h3 {
+  margin: 0;
+}
+
+.panelenergyproduced-dateform-dates {
+  display: flex;
+  column-gap: 20px;
+  align-items: center;
+}
+
+.panelenergyproduced-dateform-dates label {
+  font-size: 16px;
+}
+.panelenergyproduced-dateform-dates input {
+  font-size: 14px;
+  padding: 8px;
+  margin-left: 10px;
+}
+
+.panelenergyproduced-chart {
+  background-color: rgb(228, 228, 228);
+  height: 380px;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.panelenergyproduced-results {
+  display: flex;
+  justify-content: space-between;
+}
+
+.panelenergyproduced-results-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.panelenergyproduced-results-group h3,
+.panelenergyproduced-results-group p {
+  margin: 0;
+}
+
+.panelenergyproduced-results-group-conditiontitle {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.panelenergyproduced-results-group-conditiontitle select {
+  padding: 2px;
+  font-size: 14px;
+}
+
+.custom-tooltip {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  background-color: white;
+  border: 1px solid gray;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.custom-tooltip p {
+  margin: 0;
+}
