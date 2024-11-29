@@ -72,7 +72,7 @@ router.post("/energyProduced", async (req, res) => {
     const { fromDate, toDate } = req.body;
 
     const query = `
-        SELECT farmID, SUM(e.energyProduced) as totalEnergy
+        SELECT farmID, SUM(e.energyProduced) as totalEnergy, COUNT(DISTINCT p.panelID) as numOfPanels
         FROM panel p,energyProduced e
         WHERE e.panelID=p.panelID
             AND e.currentDate<='${toDate}'

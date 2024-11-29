@@ -61,15 +61,12 @@ function PanelStatus({ panelData }) {
   return (
     <div>
       <h1>Panel Status: Panel {panelData.panelID}</h1>
-      <p>{JSON.stringify(panelData)}</p>
-      <p>Past Logs</p>
+      
+      <p><b>Past Logs</b></p>
       {panelLogs}
-      <p>Future Maintenance</p>
+      <p><b>Future Maintenance</b></p>
       {panelMain}
-      <p>
-        This is the data available, need to use it to get most the recent log
-        and scheduled maintenance records.
-      </p>
+      
     </div>
   );
 }

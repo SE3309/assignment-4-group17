@@ -2,6 +2,7 @@
 .compare-search{
     display: flex;
     justify-content: center;
+    align-items: center;
 
 }
 .compare-search>*{
@@ -9,10 +10,21 @@
 }
 
 .table{
+    
+    color:black;
+    font-weight: 400;
+    border: none;
+    background-color: rgb(231, 231, 231);
+}
+
+
+.table>tr:nth-child(even) {
+    background-color: rgb(255, 255, 255);
+
+}
+
+.table>tr:first-child {
     background-color: purple;
-    color:white;
-    font-weight: 500;
-}
-td{
-    border: 1px solid rgb(0, 0, 0);
-}
+    color: white;
+    font-weight: 600;
+  }
