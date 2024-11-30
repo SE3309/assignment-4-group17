@@ -158,4 +158,38 @@ router.post("/panel/energyProduced", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// POST route for money earned
+router.post("/moneyEarned", async (req, res) => {
+  try {
+    const { farmID, fromDate, toDate } = req.body;
+
+    const query = `
+      SELECT COALESCE(SUM(amount), 0) AS totalEarnings, DATE(dateReceived) AS date
+      FROM Payment
+      WHERE farmID = ${farmID}
+      AND dateReceived >= '${fromDate}'
+      AND dateReceived <= '${toDate}'
+      AND dateReceived IS NOT NULL
+      GROUP BY DATE(dateReceived)
+      `;
+
+    con.query(query, (err, result) => {
+      if (err) return res.status(500).json({ error: "Database query failed" });
+
+      const totalEarnings = result.reduce((sum, record) => sum + parseFloat(record.totalEarnings || 0), 0);
+
+      const dailyEarnings = result.map((record) => ({
+        date: record.date,
+        amount: parseFloat(record.totalEarnings),
+      }));
+
+      console.log("Total Earnings:", totalEarnings);
+      res.status(200).json({ totalEarnings: totalEarnings.toFixed(2), dailyEarnings });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 module.exports = router;
