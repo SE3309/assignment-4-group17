@@ -35,11 +35,23 @@ function Owner() {
 
   const openModal2 = (farm) => {
     setFarmData(farm);
-    setIsModal2Open(true);
+    // Fetch panel IDs for the selected farm
+    axios
+      .get(`/api/owner/farm/${farm.farmID}/panels`)
+      .then((res) => {
+        if (res.data) {
+          const ids = res.data.map((panel) => panel.panelID); // Extract panel IDs
+          setPanelIDs(ids);
+          setIsModal2Open(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
-
   const closeModal2 = () => {
     setFarmData({});
+    setPanelIDs([]);
     setIsModal2Open(false);
   };
 
@@ -84,6 +96,8 @@ function Owner() {
   const [farms, setFarms] = useState([]);
   const [farmData, setFarmData] = useState({});
   const [panelData, setPanelData] = useState({});
+  const [panelIDs, setPanelIDs] = useState([]);
+
 
   // Fetch Owner Farms
   useEffect(() => {
@@ -140,7 +154,9 @@ function Owner() {
             <Compare />
           </Modal>
           <Modal open={isModal2Open} onClose={closeModal2}>
-            <EnergyProduced farmData={farmData} />
+            {panelIDs.length > 0 && (
+              <EnergyProduced farmID={farmData.farmID} panelIDs={panelIDs} />
+            )}
           </Modal>
           <Modal open={isModal3Open} onClose={closeModal3}>
             <MoneyEarned farmData={farmData} />
