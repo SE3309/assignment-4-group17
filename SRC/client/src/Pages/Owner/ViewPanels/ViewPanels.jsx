@@ -18,7 +18,6 @@ function ViewPanels({
     axios
       .get(`api/owner/farm/${farmData.farmID}/panels`)
       .then((res) => {
-        console.log(res.data);
         setPanels(res.data);
       })
       .catch((err) => {

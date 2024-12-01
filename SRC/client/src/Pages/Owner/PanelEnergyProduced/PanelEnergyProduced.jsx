@@ -15,6 +15,7 @@ import {
 } from "recharts";
 
 function PanelEnergyProduced({ panelData }) {
+  const [error, setError] = useState("");
   const [dateRange, setDateRange] = useState({ fromDate: "", toDate: "" });
   const [groupedData, setGroupedData] = useState(null);
   const [longitudinalData, setLongitudinalData] = useState(null);
@@ -22,11 +23,12 @@ function PanelEnergyProduced({ panelData }) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    setError("");
     if (!dateRange.fromDate || !dateRange.toDate) {
       return;
     }
     if (dateRange.fromDate > dateRange.toDate) {
-      alert("From date cannot be greater than to date");
+      setError("From date cannot be greater than to date");
       return;
     }
 
@@ -38,6 +40,12 @@ function PanelEnergyProduced({ panelData }) {
         toDate: dateRange.toDate,
       })
       .then((res) => {
+        if (res.status === 204) {
+          setError("No data found for the given date range");
+          setGroupedData(null);
+          setLongitudinalData(null);
+          return;
+        }
         setGroupedData(
           res.data.groupedData.map((data) => {
             return {
@@ -96,6 +104,7 @@ function PanelEnergyProduced({ panelData }) {
           </label>
           <button type="submit">Submit</button>
         </div>
+        {error && <p className="panelenergyproduced-error">{error}</p>}
       </form>
 
       {longitudinalData && groupedData && (

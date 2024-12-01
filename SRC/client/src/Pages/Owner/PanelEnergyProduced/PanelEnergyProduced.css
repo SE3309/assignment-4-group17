@@ -28,6 +28,7 @@
   font-size: 14px;
   padding: 8px;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .panelenergyproduced-chart {
@@ -75,4 +76,11 @@
 
 .custom-tooltip p {
   margin: 0;
+}
+
+.panelenergyproduced-error {
+  color: red;
+  font-size: 16px;
+  margin: 0;
+  font-weight: bold;
 }

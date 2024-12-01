@@ -135,6 +135,9 @@ router.post("/panel/energyProduced", async (req, res) => {
 
     con.query(query, function (err, result) {
       if (err) res.status(404).json({ error: err });
+      if (!result.length) {
+        return res.status(204).json({ message: "No data found" });
+      }
 
       const query2 = `
       SELECT *
@@ -178,13 +181,23 @@ router.post("/moneyEarned", async (req, res) => {
     con.query(query, (err, result) => {
       if (err) return res.status(500).json({ error: "Database query failed" });
 
-      console.log("Query Result:", result);  // Log result to debug
+      console.log("Query Result:", result); // Log result to debug
 
-      const totalEarnings = result.reduce((sum, record) => sum + parseFloat(record.totalEarnings || 0), 0);
-      const moneyToGetPaid = result.reduce((sum, record) => sum + parseFloat(record.moneyToGetPaid || 0), 0);
+      const totalEarnings = result.reduce(
+        (sum, record) => sum + parseFloat(record.totalEarnings || 0),
+        0
+      );
+      const moneyToGetPaid = result.reduce(
+        (sum, record) => sum + parseFloat(record.moneyToGetPaid || 0),
+        0
+      );
 
-      const formattedTotalEarnings = isNaN(totalEarnings) ? '0.00' : totalEarnings.toFixed(2);
-      const formattedMoneyToGetPaid = isNaN(moneyToGetPaid) ? '0.00' : moneyToGetPaid.toFixed(2);
+      const formattedTotalEarnings = isNaN(totalEarnings)
+        ? "0.00"
+        : totalEarnings.toFixed(2);
+      const formattedMoneyToGetPaid = isNaN(moneyToGetPaid)
+        ? "0.00"
+        : moneyToGetPaid.toFixed(2);
 
       const dailyEarnings = result.map((record) => ({
         date: record.date,
