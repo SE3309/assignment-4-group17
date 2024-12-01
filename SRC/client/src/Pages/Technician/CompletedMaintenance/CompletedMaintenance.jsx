@@ -14,14 +14,14 @@ function CompletedMaintenance({ technicianData, farmData }) {
       year: "numeric",
       month: "long",
       day: "numeric",
-    }); 
+    });
   };
 
   useEffect(() => {
     console.log("Fetching completed maintenance for:");
     console.log("Farm ID:", farmData.farmID);
     console.log("Technician ID:", technicianData.id);
-  
+
     axios
       .get(
         `/api/technician/farm/${farmData.farmID}/completedMaintenance/${technicianData.id}`
@@ -40,10 +40,9 @@ function CompletedMaintenance({ technicianData, farmData }) {
           setErrorMessage("Failed to fetch completed maintenance.");
         }
 
-        console.log(technicianData)
+        console.log(technicianData);
       });
   }, [farmData, technicianData]);
-  
 
   return (
     <div className="completed-maintenance">
@@ -77,19 +76,15 @@ function CompletedMaintenance({ technicianData, farmData }) {
           </tbody>
         </table>
       ) : (
-        !errorMessage && <p>No completed maintenace for this ram</p>
+        !errorMessage && <p>No completed maintenance for this farm</p>
       )}
     </div>
   );
 }
 
 CompletedMaintenance.propTypes = {
-  technicianData: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-  }).isRequired,
-  farmData: PropTypes.shape({
-    farmID: PropTypes.number.isRequired,
-  }).isRequired,
+  technicianData: PropTypes.object.isRequired,
+  farmData: PropTypes.object.isRequired,
 };
 
 export default CompletedMaintenance;

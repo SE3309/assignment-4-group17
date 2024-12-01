@@ -20,12 +20,32 @@ function ScheduledMaintenance({
         `api/technician/farm/${farmData.farmID}/scheduledMaintenance/${technicianData.id}`
       )
       .then((res) => {
-        setScheduledMaintenanceData(res.data);
+        setScheduledMaintenanceData([...res.data]);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [farmData, technicianData]);
+
+  useEffect(() => {
+    setScheduledMaintenanceData((prevData) => {
+      let updatedMaintenanceData = [];
+      prevData.forEach((maintenance) => {
+        if (maintenance.maintenanceID === maintenanceData.maintenanceID) {
+          if (
+            !maintenanceData.removed &&
+            maintenanceData.maintenanceStatus === "scheduled"
+          ) {
+            updatedMaintenanceData.push(maintenanceData);
+          }
+        } else {
+          updatedMaintenanceData.push(maintenance);
+        }
+      });
+      return updatedMaintenanceData;
+    });
+    if (maintenanceData.removed) setMaintenanceData({});
+  }, [maintenanceData, setMaintenanceData]);
 
   return (
     <div>

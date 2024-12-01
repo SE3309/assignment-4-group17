@@ -84,4 +84,50 @@ router.get(
   }
 );
 
+router.post("/updateMaintenance", async (req, res) => {
+  try {
+    const { scheduleDate, maintenanceType, maintenanceStatus, maintenanceID } =
+      req.body;
+
+    const query = `
+    START TRANSACTION;
+    UPDATE maintenance
+    SET
+        scheduleDate = '${scheduleDate}',
+        maintenanceType = '${maintenanceType}',
+        maintenanceStatus = '${maintenanceStatus}'
+    WHERE maintenanceId = ${maintenanceID};
+    SELECT *
+    FROM maintenance
+    WHERE maintenanceId = ${maintenanceID};
+    COMMIT;
+    `;
+
+    con.query(query, function (err, result) {
+      if (err) throw err;
+      res.status(200).json(result[2][0]);
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.delete("/deleteMaintenance/:maintenanceID", async (req, res) => {
+  try {
+    const { maintenanceID } = req.params;
+
+    const query = `
+    DELETE FROM maintenance
+    WHERE maintenanceID = ${maintenanceID}
+    `;
+
+    con.query(query, function (err, result) {
+      if (err) throw err;
+      res.status(200).json({ message: "Maintenance deleted successfully" });
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;

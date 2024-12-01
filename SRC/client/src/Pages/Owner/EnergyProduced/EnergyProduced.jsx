@@ -79,7 +79,14 @@ function EnergyProduced({ farmID, panelIDs }) {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="custom-tooltip" style={{ backgroundColor: "#fff", padding: "10px", border: "1px solid #ccc" }}>
+        <div
+          className="custom-tooltip"
+          style={{
+            backgroundColor: "#fff",
+            padding: "10px",
+            border: "1px solid #ccc",
+          }}
+        >
           <p>{`Date: ${label}`}</p>
           <p>{`Total Energy Produced: ${payload[0].value} Wh`}</p>
         </div>
@@ -117,7 +124,10 @@ function EnergyProduced({ farmID, panelIDs }) {
       {error && <p className="error">{error}</p>}
       {data.length > 0 && (
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={data} margin={{ top: 20, right: 30, bottom: 20, left: 20 }}>
+          <BarChart
+            data={data}
+            margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
+          >
             <XAxis dataKey="date">
               <Label value="Date" offset={-10} position="insideBottom" />
             </XAxis>
