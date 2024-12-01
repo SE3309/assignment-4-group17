@@ -130,4 +130,41 @@ router.delete("/deleteMaintenance/:maintenanceID", async (req, res) => {
   }
 });
 
+router.post("/scheduleMaintenance", async (req, res) => {
+  try {
+    const { selectedPanels, scheduleDate, technicianId } = req.body;
+
+    // Get the last maintenance ID
+    const getLastIdQuery = `
+      SELECT MAX(maintenanceID) as lastId 
+      FROM maintenance
+    `;
+
+    con.query(getLastIdQuery, function(err, result) {
+      if (err) throw err;
+      
+      const lastId = result[0].lastId || 1500; // Default to 1500 if no records
+      let values = selectedPanels
+        .map((panel, index) => 
+          `(${lastId + index + 1}, ${panel.panelID}, '${scheduleDate}', 'cleaning', 'scheduled', ${technicianId})`
+        )
+        .join(',');
+
+      const insertQuery = `
+        INSERT INTO maintenance 
+        (maintenanceID, panelID, scheduleDate, maintenanceType, maintenanceStatus, technicianID)
+        VALUES ${values}
+      `;
+
+      con.query(insertQuery, function(err, result) {
+        if (err) throw err;
+        res.status(200).json({ message: "Schedule Maintenance Success!" });
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;
