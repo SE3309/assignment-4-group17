@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 function ScheduleMaintenance({ technicianData, farmData }) {
   const [panels, setPanels] = useState([]);
   const [selectedPanels, setSelectedPanels] = useState([]);
+  const [maintenanceType, setMaintenanceType] = useState("cleaning");  // Default maintenance type
   const [message, setMessage] = useState("");
 
   // Fetch Panels of Farm
@@ -29,9 +30,22 @@ function ScheduleMaintenance({ technicianData, farmData }) {
     }
   }
 
+  // Function to handle maintenanceType change
+  function handleMaintenanceTypeChange(e) {
+    // Regex to allow only alphabets and spaces (block special characters)
+    const regex = /^[a-zA-Z\s]*$/;
+
+    if (regex.test(e.target.value)) {
+      setMaintenanceType(e.target.value);  // Update maintenanceType if input is valid
+    } else {
+      // Display an error message or alert if invalid character is entered
+      setMessage("Maintenance type can only contain letters and spaces.");
+    }
+  }
+
   async function scheduleMaintenance(e) {
     e.preventDefault();
-    
+
     if (selectedPanels.length === 0) {
       setMessage("Please select at least one panel");
       return;
@@ -49,7 +63,8 @@ function ScheduleMaintenance({ technicianData, farmData }) {
       const response = await axios.post("api/technician/scheduleMaintenance", {
         selectedPanels,
         scheduleDate,
-        technicianId: technicianData.id
+        technicianId: technicianData.id,
+        maintenanceType,  // Include maintenanceType in the request
       });
 
       setMessage(response.data.message);
@@ -90,11 +105,12 @@ function ScheduleMaintenance({ technicianData, farmData }) {
         </label>
         <label>
           Maintenance Type:
-          <input 
-            type="text" 
-            name="maintenanceType" 
-            value="cleaning" 
-            disabled 
+          <input
+            type="text"
+            name="maintenanceType"
+            value={maintenanceType}  // Bind the state value to input
+            onChange={handleMaintenanceTypeChange}  // Handle input changes
+            required
           />
         </label>
         <button type="submit">Schedule</button>
@@ -109,4 +125,3 @@ ScheduleMaintenance.propTypes = {
 };
 
 export default ScheduleMaintenance;
-

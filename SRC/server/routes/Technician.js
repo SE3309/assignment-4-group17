@@ -9,7 +9,6 @@ router.get("/farms", async (req, res) => {
         SELECT *
         FROM farm
         `;
-
     con.query(query, function (err, result) {
       if (err) throw err;
       if (!result.length) {
@@ -28,7 +27,6 @@ router.get(
   async (req, res) => {
     try {
       const { farmid, technicianid } = req.params;
-
       const query = `
       SELECT m.*
       FROM maintenance m, panel p
@@ -37,7 +35,6 @@ router.get(
       AND technicianID = ${technicianid}
       AND maintenanceStatus = 'completed'
       `;
-
       con.query(query, function (err, result) {
         if (err) throw err;
         if (!result.length) {
@@ -59,7 +56,6 @@ router.get(
   async (req, res) => {
     try {
       const { farmid, technicianid } = req.params;
-
       const query = `
         SELECT m.*
         FROM maintenance m, panel p
@@ -68,7 +64,6 @@ router.get(
         AND technicianID = ${technicianid}
         AND maintenanceStatus = 'scheduled'
         `;
-
       con.query(query, function (err, result) {
         if (err) throw err;
         if (!result.length) {
@@ -83,6 +78,44 @@ router.get(
     }
   }
 );
+
+// POST route to schedule maintenance
+router.post("/scheduleMaintenance", async (req, res) => {
+  try {
+    const { selectedPanels, scheduleDate, technicianId, maintenanceType } = req.body;
+
+    // Get the last maintenance ID
+    const getLastIdQuery = `
+      SELECT MAX(maintenanceID) as lastId 
+      FROM maintenance
+    `;
+
+    con.query(getLastIdQuery, function(err, result) {
+      if (err) throw err;
+      
+      const lastId = result[0].lastId || 1500; // Default to 1500 if no records
+      let values = selectedPanels
+        .map((panel, index) => 
+          `(${lastId + index + 1}, ${panel.panelID}, '${scheduleDate}', '${maintenanceType}', 'scheduled', ${technicianId})`
+        )
+        .join(',');
+
+      const insertQuery = `
+        INSERT INTO maintenance 
+        (maintenanceID, panelID, scheduleDate, maintenanceType, maintenanceStatus, technicianID)
+        VALUES ${values}
+      `;
+
+      con.query(insertQuery, function(err, result) {
+        if (err) throw err;
+        res.status(200).json({ message: "Schedule Maintenance Success!" });
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 router.post("/updateMaintenance", async (req, res) => {
   try {
@@ -126,43 +159,6 @@ router.delete("/deleteMaintenance/:maintenanceID", async (req, res) => {
       res.status(200).json({ message: "Maintenance deleted successfully" });
     });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-router.post("/scheduleMaintenance", async (req, res) => {
-  try {
-    const { selectedPanels, scheduleDate, technicianId } = req.body;
-
-    // Get the last maintenance ID
-    const getLastIdQuery = `
-      SELECT MAX(maintenanceID) as lastId 
-      FROM maintenance
-    `;
-
-    con.query(getLastIdQuery, function(err, result) {
-      if (err) throw err;
-      
-      const lastId = result[0].lastId || 1500; // Default to 1500 if no records
-      let values = selectedPanels
-        .map((panel, index) => 
-          `(${lastId + index + 1}, ${panel.panelID}, '${scheduleDate}', 'cleaning', 'scheduled', ${technicianId})`
-        )
-        .join(',');
-
-      const insertQuery = `
-        INSERT INTO maintenance 
-        (maintenanceID, panelID, scheduleDate, maintenanceType, maintenanceStatus, technicianID)
-        VALUES ${values}
-      `;
-
-      con.query(insertQuery, function(err, result) {
-        if (err) throw err;
-        res.status(200).json({ message: "Schedule Maintenance Success!" });
-      });
-    });
-  } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
