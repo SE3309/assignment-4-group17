@@ -203,4 +203,35 @@ router.post("/moneyEarned", async (req, res) => {
   }
 });
 
+// POST total energy produced by a specific farm
+router.post("/energyProduced/:farmID", async (req, res) => {
+  try {
+    const { farmID } = req.params;
+    const { fromDate, toDate } = req.body;
+
+    const query = `
+      SELECT 
+        e.currentDate AS date, 
+        SUM(e.energyProduced) AS dailyEnergy
+      FROM panel p
+      JOIN energyProduced e ON e.panelID = p.panelID
+      WHERE e.currentDate >= '${fromDate}'
+        AND e.currentDate <= '${toDate}'
+        AND p.farmID = ${farmID}
+      GROUP BY e.currentDate
+      ORDER BY e.currentDate
+    `;
+
+    con.query(query, function (err, result) {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;

@@ -11,16 +11,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-function EnergyProduced({ farmID, panelIDs }) {
+function EnergyProduced({ farmID }) {
   const [dateRange, setDateRange] = useState({ fromDate: "", toDate: "" });
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
 
-  // Function to format dates to 'YYYY-MM-DD'
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0]; // Extracts only the date part
+  const cleanDate = (dateString) => {
+    return dateString.split("T")[0]; // Splits the string at "T" and takes the first part
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,41 +31,19 @@ function EnergyProduced({ farmID, panelIDs }) {
       setError("From date cannot be later than To date.");
       return;
     }
-
+  
     try {
-      let farmEnergyData = {};
-
-      // Fetch energy data for each panel in the farm
-      await Promise.all(
-        panelIDs.map(async (panelID) => {
-          const response = await axios.post("api/owner/panel/energyProduced", {
-            panelID,
-            farmID,
-            fromDate: dateRange.fromDate,
-            toDate: dateRange.toDate,
-          });
-
-          // Aggregate energy data for the farm
-          response.data.longitudinalData.forEach((entry) => {
-            const date = entry.currentDate;
-            const energyProduced = parseFloat(entry.energyProduced);
-
-            if (!farmEnergyData[date]) {
-              farmEnergyData[date] = 0;
-            }
-            farmEnergyData[date] += energyProduced;
-          });
-        })
-      );
-
-      // Transform the aggregated data into a format suitable for the graph
-      const formattedData = Object.entries(farmEnergyData).map(
-        ([date, totalEnergyProduced]) => ({
-          date: formatDate(date),
-          totalEnergyProduced,
-        })
-      );
-
+      const response = await axios.post(`/api/owner/energyProduced/${farmID}`, {
+        fromDate: dateRange.fromDate,
+        toDate: dateRange.toDate,
+      });
+  
+      // Format the response for the chart
+      const formattedData = response.data.map((entry) => ({
+        date: cleanDate(entry.date), // Clean the date
+        dailyEnergy: parseFloat(entry.dailyEnergy), // Ensure it's a number
+      }));
+  
       setData(formattedData);
       setError("");
     } catch (err) {
@@ -74,6 +51,8 @@ function EnergyProduced({ farmID, panelIDs }) {
       console.error(err);
     }
   };
+  
+  
 
   // Custom Tooltip Function
   const CustomTooltip = ({ active, payload, label }) => {
@@ -88,7 +67,7 @@ function EnergyProduced({ farmID, panelIDs }) {
           }}
         >
           <p>{`Date: ${label}`}</p>
-          <p>{`Total Energy Produced: ${payload[0].value} Wh`}</p>
+          <p>{`Energy Produced: ${payload[0].value} Wh`}</p>
         </div>
       );
     }
@@ -124,24 +103,25 @@ function EnergyProduced({ farmID, panelIDs }) {
       {error && <p className="error">{error}</p>}
       {data.length > 0 && (
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart
-            data={data}
-            margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
-          >
-            <XAxis dataKey="date">
-              <Label value="Date" offset={-10} position="insideBottom" />
-            </XAxis>
-            <YAxis>
-              <Label
-                value="Energy Produced (Wh)"
-                angle={-90}
-                position="insideLeft"
-              />
-            </YAxis>
-            <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="totalEnergyProduced" fill="#82ca9d" />
-          </BarChart>
-        </ResponsiveContainer>
+        <BarChart
+          data={data}
+          margin={{ top: 20, right: 30, bottom: 20, left: 20 }}
+        >
+          <XAxis dataKey="date">
+            <Label value="Date" offset={-10} position="insideBottom" />
+          </XAxis>
+          <YAxis>
+            <Label
+              value="Energy Produced (Wh)"
+              angle={-90}
+              position="insideLeft"
+            />
+          </YAxis>
+          <Tooltip content={<CustomTooltip />} />
+          <Bar dataKey="dailyEnergy" fill="#82ca9d" />
+        </BarChart>
+      </ResponsiveContainer>
+      
       )}
     </div>
   );
