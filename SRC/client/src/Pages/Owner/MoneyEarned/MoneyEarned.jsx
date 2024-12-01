@@ -5,14 +5,14 @@ import "./MoneyEarned.css";
 function MoneyEarned({ farmData }) {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [earnings, setEarnings] = useState({ totalEarnings: 0, dailyEarnings: [] });
+  const [earnings, setEarnings] = useState({ totalEarnings: 0, moneyToGetPaid: 0, dailyEarnings: [] });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const fetchEarnings = async () => {
     setLoading(true);
     setError("");
-    setEarnings({ totalEarnings: 0, dailyEarnings: [] });
+    setEarnings({ totalEarnings: 0, moneyToGetPaid: 0, dailyEarnings: [] });
   
     try {
       const response = await axios.post("/api/owner/moneyEarned", {
@@ -24,13 +24,12 @@ function MoneyEarned({ farmData }) {
       console.log("API Response:", response.data); // Debugging
   
       if (response.data) {
-        setEarnings({
-          totalEarnings: parseFloat(response.data.totalEarnings) || 0, // Convert to number
-          dailyEarnings: response.data.dailyEarnings || [],
-        });
+        setEarnings(response.data);
+      } else {
+        setEarnings({ totalEarnings: 0, moneyToGetPaid: 0, dailyEarnings: [] });
       }
     } catch (err) {
-      console.error("Error fetching earnings:", err);
+      console.error(err);
       setError("Failed to fetch earnings. Please try again.");
     } finally {
       setLoading(false);
@@ -78,8 +77,12 @@ function MoneyEarned({ farmData }) {
             <div>
               <h3>Total Earnings</h3>
               <p>
-                <strong>${formattedTotalEarnings}</strong>
+                <strong>${earnings.totalEarnings}</strong>
               </p>
+              <h3>Money to Get Paid</h3>
+          <p>
+            <strong>${earnings.moneyToGetPaid}</strong>
+          </p>
             </div>
           )}
         </div>

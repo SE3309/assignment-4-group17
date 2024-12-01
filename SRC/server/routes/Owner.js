@@ -165,31 +165,42 @@ router.post("/moneyEarned", async (req, res) => {
     const { farmID, fromDate, toDate } = req.body;
 
     const query = `
-      SELECT COALESCE(SUM(amount), 0) AS totalEarnings, DATE(dateReceived) AS date
+      SELECT 
+        SUM(CASE WHEN dateReceived IS NOT NULL THEN amount ELSE 0 END) AS totalEarnings,
+        SUM(CASE WHEN dateReceived IS NULL THEN amount ELSE 0 END) AS moneyToGetPaid,
+        DATE(dateReceived) AS date
       FROM Payment
       WHERE farmID = ${farmID}
-      AND dateReceived >= '${fromDate}'
-      AND dateReceived <= '${toDate}'
-      AND dateReceived IS NOT NULL
+      AND ((dateReceived >= '${fromDate}' AND dateReceived <= '${toDate}') OR dateReceived IS NULL)
       GROUP BY DATE(dateReceived)
-      `;
+    `;
 
     con.query(query, (err, result) => {
       if (err) return res.status(500).json({ error: "Database query failed" });
 
+      console.log("Query Result:", result);  // Log result to debug
+
       const totalEarnings = result.reduce((sum, record) => sum + parseFloat(record.totalEarnings || 0), 0);
+      const moneyToGetPaid = result.reduce((sum, record) => sum + parseFloat(record.moneyToGetPaid || 0), 0);
+
+      const formattedTotalEarnings = isNaN(totalEarnings) ? '0.00' : totalEarnings.toFixed(2);
+      const formattedMoneyToGetPaid = isNaN(moneyToGetPaid) ? '0.00' : moneyToGetPaid.toFixed(2);
 
       const dailyEarnings = result.map((record) => ({
         date: record.date,
-        amount: parseFloat(record.totalEarnings),
+        amount: parseFloat(record.totalEarnings || 0),
       }));
 
-      console.log("Total Earnings:", totalEarnings);
-      res.status(200).json({ totalEarnings: totalEarnings.toFixed(2), dailyEarnings });
+      res.status(200).json({
+        totalEarnings: formattedTotalEarnings,
+        moneyToGetPaid: formattedMoneyToGetPaid,
+        dailyEarnings,
+      });
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 module.exports = router;
