@@ -7,6 +7,7 @@ import { useState } from "react";
 function UpdateMaintenance({ maintenanceData, setMaintenanceData }) {
   const [message, setMessage] = useState("");
   const [data, setData] = useState(maintenanceData);
+  
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -20,10 +21,11 @@ function UpdateMaintenance({ maintenanceData, setMaintenanceData }) {
       })
       .then((res) => {
         setMaintenanceData(res.data);
-        setMessage("Maintenance updated successfully");
+        window.alert("Maintenance updated successfully");
+        closeModal();
       })
       .catch((err) => {
-        setMessage("Failed to update maintenance");
+;
       });
   }
 
@@ -81,6 +83,7 @@ function UpdateMaintenance({ maintenanceData, setMaintenanceData }) {
 UpdateMaintenance.propTypes = {
   maintenanceData: PropTypes.object.isRequired,
   setMaintenanceData: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
 export default UpdateMaintenance;

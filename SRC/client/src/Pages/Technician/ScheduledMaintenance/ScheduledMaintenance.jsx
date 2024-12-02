@@ -1,8 +1,10 @@
 import "./ScheduledMaintenance.css";
 import PropTypes from "prop-types";
 
+
 import axios from "axios";
 import { useState, useEffect } from "react";
+
 
 function ScheduledMaintenance({
   technicianData,
@@ -13,6 +15,12 @@ function ScheduledMaintenance({
   openDeleteModal,
 }) {
   const [scheduledMaintenanceData, setScheduledMaintenanceData] = useState([]);
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
 
   useEffect(() => {
     axios
@@ -48,38 +56,54 @@ function ScheduledMaintenance({
   }, [maintenanceData, setMaintenanceData]);
 
   return (
-    <div>
+    <div className="scheduled-maintenance">
       <h1>Scheduled Maintenance: Farm {farmData.farmID}</h1>
-      <p>This is the data returned, need to format it into a table.</p>
-      {scheduledMaintenanceData.map((maintenance) => (
-        /* temporary design just to test functionality */
-        <div
-          style={{
-            border: "1px solid black",
-            margin: "10px",
-            cursor: "pointer",
-            backgroundColor:
-              maintenanceData.maintenanceID === maintenance.maintenanceID
-                ? "green"
-                : "white",
-          }}
-          onClick={() => setMaintenanceData(maintenance)}
-          key={maintenance.maintenanceID}
-        >
-          <p>{JSON.stringify(maintenance)}</p>
-        </div>
-      ))}
-      <button
-        disabled={!Object.hasOwn(maintenanceData, "maintenanceID")}
-        onClick={() => openUpdateModal()}
-      >
-        Update Selected Maintenance
+       {scheduledMaintenanceData.length > 0 ? (
+        <table className="maintenance-table">
+          <thead>
+            <tr>
+              <th>Maintenance ID</th>
+              <th>Panel ID</th>
+              <th>Schedule Date</th>
+              <th>Maintenance Type</th>
+              <th>Status</th>
+              <th>Technician ID</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scheduledMaintenanceData.map((maintenance) => (
+              <tr
+                key={maintenance.maintenanceID}
+                style={{
+                  backgroundColor:
+                    maintenanceData.maintenanceID === maintenance.maintenanceID
+                      ? "lightgreen"
+                      : "white",
+                  cursor: "pointer",
+                }}
+                onClick={() => setMaintenanceData(maintenance)}
+              >
+                <td>{maintenance.maintenanceID}</td>
+                <td>{maintenance.panelID}</td>
+                <td>{formatDate(maintenance.scheduleDate)}</td>
+                <td>{maintenance.maintenanceType}</td>
+                <td>{maintenance.maintenanceStatus}</td>
+                <td>{maintenance.technicianID}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+       <p>No scheduled maintenance for this farm</p>
+      )}
+      <button disabled={!Object.hasOwn(maintenanceData, "maintenanceID")}
+      onClick={() => openUpdateModal()}>
+       Update
       </button>
       <button
-        disabled={!Object.hasOwn(maintenanceData, "maintenanceID")}
-        onClick={() => openDeleteModal()}
-      >
-        Delete Selected Maintenance
+       disabled={!Object.hasOwn(maintenanceData, "maintenanceID")}
+      onClick={() => openDeleteModal()}>
+      Delete
       </button>
     </div>
   );

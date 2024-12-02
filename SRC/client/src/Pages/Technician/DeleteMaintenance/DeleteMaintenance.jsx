@@ -21,7 +21,8 @@ function DeleteMaintenance({
           maintenanceID: maintenanceData.maintenanceID,
           removed: true,
         });
-        setMessage("Maintenance deleted successfully");
+        window.alert("Maintenance deleted successfully");
+        closeModal();
       })
       .catch((err) => {
         setMessage("Failed to delete maintenance");
