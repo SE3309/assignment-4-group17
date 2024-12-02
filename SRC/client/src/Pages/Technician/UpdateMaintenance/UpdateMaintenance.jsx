@@ -4,10 +4,13 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { useState } from "react";
 
-function UpdateMaintenance({ maintenanceData, setMaintenanceData }) {
+function UpdateMaintenance({
+  maintenanceData,
+  setMaintenanceData,
+  closeModal,
+}) {
   const [message, setMessage] = useState("");
   const [data, setData] = useState(maintenanceData);
-  
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -25,7 +28,7 @@ function UpdateMaintenance({ maintenanceData, setMaintenanceData }) {
         closeModal();
       })
       .catch((err) => {
-;
+        setMessage("Failed to update maintenance");
       });
   }
 

@@ -141,6 +141,7 @@ function Technician() {
           <UpdateMaintenance
             maintenanceData={maintenanceData}
             setMaintenanceData={setMaintenanceData}
+            closeModal={closeModal3}
           />
         </Modal>
         <Modal open={isModal4Open} onClose={closeModal4}>
