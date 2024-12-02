@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 function ScheduleMaintenance({ technicianData, farmData }) {
   const [panels, setPanels] = useState([]);
   const [selectedPanels, setSelectedPanels] = useState([]);
-  const [maintenanceType, setMaintenanceType] = useState("cleaning");  // Default maintenance type
+  const [maintenanceType, setMaintenanceType] = useState("cleaning"); // Default maintenance type
   const [message, setMessage] = useState("");
 
   // Fetch Panels of Farm
@@ -35,11 +35,13 @@ function ScheduleMaintenance({ technicianData, farmData }) {
     // Regex to allow only alphabets and spaces (block special characters)
     const regex = /^[a-zA-Z\s]*$/;
 
-    if (regex.test(e.target.value)) {
-      setMaintenanceType(e.target.value);  // Update maintenanceType if input is valid
+    if (regex.test(e.target.value) && e.target.value.length <= 140) {
+      setMaintenanceType(e.target.value); // Update maintenanceType if input is valid
     } else {
       // Display an error message or alert if invalid character is entered
-      setMessage("Maintenance type can only contain letters and spaces.");
+      setMessage(
+        "Maintenance type can only contain letters and spaces. (Max 140 characters)"
+      );
     }
   }
 
@@ -64,7 +66,7 @@ function ScheduleMaintenance({ technicianData, farmData }) {
         selectedPanels,
         scheduleDate,
         technicianId: technicianData.id,
-        maintenanceType,  // Include maintenanceType in the request
+        maintenanceType, // Include maintenanceType in the request
       });
 
       setMessage(response.data.message);
@@ -77,13 +79,14 @@ function ScheduleMaintenance({ technicianData, farmData }) {
 
   return (
     <div className="viewpanels">
-      <h1>View Panels: Farm {farmData.farmID}</h1>
-      <p>
-        You can select several panels, need to use the form to schedule
-        maintenance for all selected panels.
-      </p>
+      <h1>Schedule Maintenance: Farm {farmData.farmID}</h1>
+      <p>Select panel(s) to schedule maintenance.</p>
       {message && (
-        <div className={`message ${message.includes("Success") ? "success" : "error"}`}>
+        <div
+          className={`message ${
+            message.includes("Success") ? "success" : "error"
+          }`}
+        >
           {message}
         </div>
       )}
@@ -98,22 +101,24 @@ function ScheduleMaintenance({ technicianData, farmData }) {
           ></div>
         ))}
       </div>
-      <form onSubmit={scheduleMaintenance}>
-        <label>
-          Date:
-          <input type="date" name="maintenanceDate" required />
-        </label>
-        <label>
-          Maintenance Type:
-          <input
-            type="text"
-            name="maintenanceType"
-            value={maintenanceType}  // Bind the state value to input
-            onChange={handleMaintenanceTypeChange}  // Handle input changes
-            required
-          />
-        </label>
-        <button type="submit">Schedule</button>
+      <form className="schedulemaintenance-form" onSubmit={scheduleMaintenance}>
+        <div className="schedulemaintenance-form-inputs">
+          <label>
+            Date:
+            <input type="date" name="maintenanceDate" required />
+          </label>
+          <label>
+            Maintenance Type:
+            <input
+              type="text"
+              name="maintenanceType"
+              value={maintenanceType} // Bind the state value to input
+              onChange={handleMaintenanceTypeChange} // Handle input changes
+              required
+            />
+          </label>
+          <button type="submit">Schedule</button>
+        </div>
       </form>
     </div>
   );

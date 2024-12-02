@@ -28,6 +28,7 @@ function ViewPanels({
   return (
     <div className="viewpanels">
       <h1>View Panels: Farm {farmData.farmID}</h1>
+      <p>Select a panel.</p>
       <div className="viewpanels-grid">
         {/* Map Over All Panels To Create Panel Grid */}
         {panels.map((panel) => (

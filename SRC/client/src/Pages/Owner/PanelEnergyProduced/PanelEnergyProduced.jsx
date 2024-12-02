@@ -14,24 +14,33 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+// PanelEnergyProduced Component
 function PanelEnergyProduced({ panelData }) {
+  // State Variables
   const [error, setError] = useState("");
   const [dateRange, setDateRange] = useState({ fromDate: "", toDate: "" });
   const [groupedData, setGroupedData] = useState(null);
   const [longitudinalData, setLongitudinalData] = useState(null);
   const [selectedConditon, setSelectedCondition] = useState("-");
 
+  // Function to handle form submission
   function handleSubmit(e) {
     e.preventDefault();
     setError("");
+
+    // Check if both dates are selected
     if (!dateRange.fromDate || !dateRange.toDate) {
+      setError("Please select both dates");
       return;
     }
+
+    // Check if from date is less than to date
     if (dateRange.fromDate > dateRange.toDate) {
       setError("From date cannot be greater than to date");
       return;
     }
 
+    // Fetch Energy Produced Data
     axios
       .post("api/owner/panel/energyProduced", {
         panelID: panelData.panelID,
@@ -77,6 +86,7 @@ function PanelEnergyProduced({ panelData }) {
   return (
     <div className="panelenergyproduced">
       <h1>Energy Produced: Panel {panelData.panelID}</h1>
+      {/* Date Selection Form */}
       <form className="panelenergyproduced-dateform" onSubmit={handleSubmit}>
         <h3>Select your date range:</h3>
         <div className="panelenergyproduced-dateform-dates">
@@ -110,6 +120,7 @@ function PanelEnergyProduced({ panelData }) {
       {longitudinalData && groupedData && (
         <>
           <div className="panelenergyproduced-chart">
+            {/* Energy Produced Chart */}
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 height={600}
@@ -151,6 +162,7 @@ function PanelEnergyProduced({ panelData }) {
             </ResponsiveContainer>
           </div>
           <div className="panelenergyproduced-results">
+            {/* Summary Results */}
             <div className="panelenergyproduced-results-group">
               <h3>Summary Results</h3>
               <p>
@@ -175,6 +187,7 @@ function PanelEnergyProduced({ panelData }) {
               </p>
             </div>
 
+            {/* Weather Condition Results */}
             <div className="panelenergyproduced-results-group">
               <div className="panelenergyproduced-results-group-conditiontitle">
                 <h3>Weather Condition Results</h3>
@@ -225,6 +238,7 @@ PanelEnergyProduced.propTypes = {
   panelData: PropTypes.object.isRequired,
 };
 
+// CustomToolTip Component
 function CustomToolTip({ active, payload }) {
   if (payload && payload[0] && active) {
     return (

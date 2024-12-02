@@ -48,6 +48,7 @@ function UpdateMaintenance({ maintenanceData, setMaintenanceData }) {
               Maintenance Type
               <input
                 required
+                maxLength={140}
                 type="text"
                 value={data.maintenanceType}
                 onChange={(e) =>
